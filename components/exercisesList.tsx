@@ -63,7 +63,7 @@ const styles = StyleSheet.create(
         container: {
             flex: 1,
             padding: 16,
-            backgroundColor: '#fff'
+            backgroundColor: '#09ede9'
         },
         exerciseItem: {
             flex: 1 ,
