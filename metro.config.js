@@ -4,6 +4,10 @@ const { getDefaultConfig } = require('expo/metro-config');
 /** @type {import('expo/metro-config').MetroConfig} */
 const config = getDefaultConfig(__dirname);
 
+const {
+    wrapWithReanimatedMetroConfig,
+  } = require('react-native-reanimated/metro-config');
+
 [('js', 'jsx', 'json', 'ts', 'tsx', 'cjs', 'mjs')].forEach((ext) => {
     if(config.resolver.sourceExts.indexOf(ext) === -1) {
         config.resolver.sourceExts.push(ext);
@@ -16,4 +20,4 @@ const config = getDefaultConfig(__dirname);
     }
 });
 
-module.exports = config;
+module.exports = wrapWithReanimatedMetroConfig(config);
