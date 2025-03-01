@@ -22,7 +22,7 @@ export default function ExercisesList() {
     }, []);
 
     return (
-        <View style={{paddingBottom: 20}}>
+        <View style={{paddingBottom: 50}}>
             <Text>ExercisesList</Text>
             <FlatList
                 data={exercisesList}
@@ -35,8 +35,8 @@ export default function ExercisesList() {
 
 const ExercisesItem = ({ item }: { item: Exercise }) => {
     const [showInstructions, setShowInstructions] = useState(false);
-    const height = useSharedValue(40);
-    const cardRef = useRef<View>(null);
+    const height = useSharedValue(140);
+    const [instructionsHeight, setInstructionsHeight] = useState(0);
     const {addExercise , removeExercise} = excerciseStore();
 
     const animatedStyle = useAnimatedStyle(() => {
@@ -45,30 +45,26 @@ const ExercisesItem = ({ item }: { item: Exercise }) => {
                 damping: 60,
                 stiffness: 60
             }),
-            overflow: 'hidden'
         };
     });
 
-    const measureAndAnimate = () => {
+    useEffect(() => {
         if (showInstructions) {
-            if (cardRef.current) {
-                cardRef.current?.measure((x, y, width, measuredHeight) => {
-                    height.value = measuredHeight + 30;
-                });
-            }
+            height.value = 140 + instructionsHeight;
         } else {
             height.value = 140;
         }
-    };
+    }, [showInstructions, instructionsHeight]);
 
-    useLayoutEffect(() => {
-        measureAndAnimate();
-    }, [showInstructions]);
+    const handleLayout = (event: { nativeEvent: { layout: { height: any; }; }; }) => {
+        const { height: layoutHeight } = event.nativeEvent.layout ;
+        setInstructionsHeight(layoutHeight);
+    };
 
     return (
         <Pressable onPress={() => setShowInstructions(!showInstructions)}>
             <Animated.View style={[styles.exerciseItem, animatedStyle]}>
-                <View ref={cardRef} style={{opacity: 1}}>
+                <View style={{opacity: 1 }}>
                     <Text style={styles.title}>{item.name}</Text>
                     <Text>Exercise Type: {item.type}</Text>
                     <Text>{item.muscle}</Text>
@@ -78,10 +74,9 @@ const ExercisesItem = ({ item }: { item: Exercise }) => {
                         <Text>Add</Text>
                     </Pressable>
                     {/* Instructions */}
-                    <View style={{display: showInstructions ? 'flex' : 'none'}}>
+                    <View onLayout={handleLayout}>
                         <Text style={styles.instructions}>{item.instructions}</Text>
                     </View>
-                    
                 </View>
             </Animated.View>
         </Pressable>
@@ -105,7 +100,8 @@ const styles = StyleSheet.create({
         shadowColor: '#000',
         shadowOffset: { width: 1, height: 2 },
         shadowOpacity: 0.1,
-        shadowRadius: 4
+        shadowRadius: 4,
+        overflow: 'hidden'
     },
     title: {
         fontSize: 18,

@@ -5,6 +5,7 @@ interface ExerciseStore{
     ExcersisesList: Exercise[];
     addExercise: (exercise: Exercise) => void;
     removeExercise: (exercise: Exercise) => void;
+    clearAll : () => void;
 }
 
 const excerciseStore = create<ExerciseStore>((set) => ({
@@ -14,7 +15,10 @@ const excerciseStore = create<ExerciseStore>((set) => ({
     },
     removeExercise(exercise) {
         set((state) => ({ ExcersisesList: state.ExcersisesList.filter((ex) => ex.name !== exercise.name) }));
-    }
+    },
+    clearAll() {
+        set({ ExcersisesList: [] });
+    },
 }));
 
 export default excerciseStore;
